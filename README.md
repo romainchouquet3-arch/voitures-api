@@ -153,28 +153,4 @@ car-api/
 
 Ce projet est un exercice pédagogique.
 
-7.2 Initialisation Git
-Initialisez Git dans votre projet :
-git init
-git add .
-git commit -m "Initial commit: API REST voitures classiques"
-git remote add origin [URL_DE_VOTRE_REPO]
-git branch -M main
-git push -u origin main
 
-git init
-git add .
-git commit -m "Initial commit: API REST voitures classiques"
-git remote add origin https://github.com/romainchouquet3-arch/voitures-api.git
-git branch -M main
-git push -u origin main
-
-echo "# voitures-api" >> README.md
-git init
-git config --global user.email "romain.chouquet3@gmail.com"
-git config --global user.name "romainchouquet3-arch"
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/romainchouquet3-arch/voitures-api.git
-git push -u origin main
