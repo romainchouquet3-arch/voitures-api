@@ -147,7 +147,7 @@ car-api/
 
 ## 👨‍💻 Développeur
 
-[Votre Nom] - Licence Informatique 2024-2025
+CHOUQUET Romain Developpement Web ENSEA 2025-2026
 
 ## 📝 Licence
 
