@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestion voitures - Interface</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Voitures Classiques</h1>
+    <p class="subtitle">Interface légère pour consulter l'API</p>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <label for="apiKey">API Key :</label>
+      <input id="apiKey" placeholder="Entrez votre clé API (x-api-key)" />
+      <button id="btnFetch">Charger les voitures</button>
+      <div class="filters">
+        <input id="filterBrand" placeholder="Marque (ex: Ferrari)" />
+        <input id="filterYear" placeholder="Année (ex: 1962)" />
+        <button id="btnSearch">Rechercher</button>
+      </div>
+    </section>
+
+    <section class="results">
+      <div id="message" class="message">Cliquez sur "Charger les voitures" ou faites une recherche.</div>
+      <table id="carsTable" class="cars-table hidden">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Année</th>
+            <th>Couleur</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>Interface front simple — connectée à l'API.</small>
+  </footer>
+
+  <script>
+    const apiBase = '/api/cars';
+    const msgEl = document.getElementById('message');
+    const table = document.getElementById('carsTable');
+    const tbody = table.querySelector('tbody');
+
+    function setMessage(text, isError = false) {
+      msgEl.textContent = text;
+      msgEl.className = isError ? 'message error' : 'message';
+      table.classList.toggle('hidden', !!isError || text.includes('Cliquez'));
+    }
+
+    async function fetchCars(path = apiBase) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const headers = apiKey ? { 'x-api-key': apiKey } : {};
+      setMessage('Chargement…');
+      try {
+        const res = await fetch(path, { headers });
+        const json = await res.json();
+        if (!res.ok) {
+          setMessage(json.message || json.error || 'Erreur lors de la requête', true);
+          return;
+        }
+        const data = json.data ?? json; // compatibilité selon endpoints
+        if (!Array.isArray(data) || data.length === 0) {
+          setMessage('Aucune voiture trouvée pour ces critères.');
+          tbody.innerHTML = '';
+          table.classList.add('hidden');
+          return;
+        }
+        // remplir le tableau
+        tbody.innerHTML = '';
+        for (const car of data) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${car.id ?? ''}</td>
+            <td>${car.brand ?? car.marque ?? ''}</td>
+            <td>${car.model ?? car.modele ?? ''}</td>
+            <td>${car.year ?? ''}</td>
+            <td>${car.color ?? car.couleur ?? ''}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+        table.classList.remove('hidden');
+        setMessage(`Résultats : ${data.length} voiture(s).`);
+      } catch (err) {
+        setMessage('Erreur réseau ou serveur indisponible.', true);
+        console.error(err);
+      }
+    }
+
+    document.getElementById('btnFetch').addEventListener('click', () => fetchCars());
+    document.getElementById('btnSearch').addEventListener('click', () => {
+      const brand = document.getElementById('filterBrand').value.trim();
+      const year = document.getElementById('filterYear').value.trim();
+      const params = new URLSearchParams();
+      if (brand) params.set('brand', brand);
+      if (year) params.set('year', year);
+      const url = '/api/cars/search' + (params.toString() ? `?${params.toString()}` : '');
+      fetchCars(url);
+    });
+  </script>
+</body>
+</html>
