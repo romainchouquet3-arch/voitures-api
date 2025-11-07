@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voitures classiques</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .fade-in { opacity: 0; transition: opacity 0.5s ease-in-out; }
+    .fade-in.visible { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Voitures classiques</h1>
+    <p class="subtitle">Recherche + affichage des images sans clignotement</p>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <input id="apiKey" placeholder="Clé API (x-api-key)" />
+      <button id="btnFetch">Toutes</button>
+      <input id="filterBrand" placeholder="Marque (ex: Ferrari)" />
+      <input id="filterYear" placeholder="Année (ex: 1962)" />
+      <button id="btnSearch">Rechercher</button>
+    </section>
+
+    <div id="message" class="message">Cliquez sur “Toutes” ou recherchez.</div>
+
+    <section id="gallery" class="gallery"></section>
+  </main>
+
+  <footer class="footer">
+    <small>Interface reliée à l'API Express</small>
+  </footer>
+
+  <script>
+    const apiBase = '/api/cars';
+    const msgEl = document.getElementById('message');
+    const gallery = document.getElementById('gallery');
+
+    function showMessage(text, isError = false) {
+      msgEl.textContent = text;
+      msgEl.className = isError ? 'message error' : 'message';
+    }
+
+    async function fetchCars(url) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const headers = apiKey ? { 'x-api-key': apiKey } : {};
+      showMessage('Chargement...');
+
+      try {
+        const res = await fetch(url, { headers });
+        const json = await res.json();
+        if (!res.ok) {
+          showMessage(json.error || json.message || 'Erreur lors de la requête', true);
+          return;
+        }
+
+        const data = json.data ?? json;
+        if (!Array.isArray(data) || data.length === 0) {
+          showMessage('Aucune voiture trouvée pour ces critères.');
+          return;
+        }
+
+        updateGallery(data);
+        showMessage(`${data.length} voiture(s) trouvée(s).`);
+      } catch (err) {
+        console.error(err);
+        showMessage('Erreur réseau ou API inaccessible.', true);
+      }
+    }
+
+    function updateGallery(cars) {
+      const existingCards = new Map();
+      document.querySelectorAll('.car-card').forEach(card => {
+        existingCards.set(card.dataset.id, card);
+      });
+
+      const newIds = new Set(cars.map(c => c.id?.toString()));
+
+      existingCards.forEach((card, id) => {
+        if (!newIds.has(id)) card.remove();
+      });
+
+      cars.forEach(car => {
+        const existing = existingCards.get(car.id?.toString());
+        if (existing) {
+          existing.querySelector('h2').textContent = `${car.brand ?? ''} ${car.model ?? ''}`;
+          existing.querySelector('.car-info').innerHTML = `
+            <p><b>Année :</b> ${car.year ?? 'N/A'}</p>
+            <p><b>Couleur :</b> ${car.color ?? 'N/A'}</p>
+          `;
+        } else {
+          const div = document.createElement('div');
+          div.className = 'car-card fade-in';
+          div.dataset.id = car.id;
+          div.innerHTML = `
+            <img src="${car.image || '/images/placeholder.png'}"
+                 alt="${car.brand || ''}"
+                 onerror="this.onerror=null; this.src='/images/placeholder.png'">
+            <div class="car-info">
+              <h2>${car.brand ?? ''} ${car.model ?? ''}</h2>
+              <p><b>Année :</b> ${car.year ?? 'N/A'}</p>
+              <p><b>Couleur :</b> ${car.color ?? 'N/A'}</p>
+            </div>
+          `;
+          gallery.appendChild(div);
+          requestAnimationFrame(() => div.classList.add('visible'));
+        }
+      });
+    }
+
+    document.getElementById('btnFetch').addEventListener('click', () => {
+      fetchCars(apiBase);
+    });
+
+    document.getElementById('btnSearch').addEventListener('click', () => {
+      const brand = document.getElementById('filterBrand').value.trim();
+      const year = document.getElementById('filterYear').value.trim();
+
+      const params = new URLSearchParams();
+      if (brand) params.set('brand', brand);
+      if (year) params.set('year', year);
+
+      const url = `/api/cars/search?${params.toString()}`;
+      fetchCars(url);
+    });
+  </script>
+</body>
+</html>

@@ -9,7 +9,8 @@ const sampleCars = [
     color: 'Rouge',
     price: 45000000,
     mileage: 12000,
-    description: 'Voiture de collection exceptionnelle'
+    description: 'Voiture de collection exceptionnelle',
+    image: '/images/ferrari.jpg'
   },
   {
     brand: 'Porsche',
@@ -18,7 +19,8 @@ const sampleCars = [
     color: 'Blanc',
     price: 850000,
     mileage: 45000,
-    description: 'Légendaire modèle RS'
+    description: 'Légendaire modèle RS',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Porsche_911_RS_2.7.jpg'
   },
   {
     brand: 'Jaguar',
@@ -27,7 +29,8 @@ const sampleCars = [
     color: 'Bleu',
     price: 320000,
     mileage: 78000,
-    description: 'Icône du design automobile'
+    description: 'Icône du design automobile',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Jaguar_E-Type_1961.jpg'
   },
   {
     brand: 'Mercedes-Benz',
@@ -36,7 +39,8 @@ const sampleCars = [
     color: 'Argent',
     price: 1200000,
     mileage: 34000,
-    description: 'Portes papillon emblématiques'
+    description: 'Portes papillon emblématiques',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Mercedes-Benz_300SL_Gullwing_1955.jpg'
   },
   {
     brand: 'Aston Martin',
@@ -45,7 +49,8 @@ const sampleCars = [
     color: 'Gris',
     price: 750000,
     mileage: 56000,
-    description: 'La voiture de James Bond'
+    description: 'La voiture de James Bond',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Aston_Martin_DB5_1964.jpg'
   }
 ];
 
@@ -62,8 +67,8 @@ function seedDatabase() {
 
     // Puis on insère les nouvelles données
     const insertQuery = `
-      INSERT INTO cars (brand, model, year, color, price, mileage, description)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO cars (brand, model, year, color, price, mileage, description, image)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     let insertedCount = 0;
@@ -71,7 +76,16 @@ function seedDatabase() {
     sampleCars.forEach((car) => {
       db.run(
         insertQuery,
-        [car.brand, car.model, car.year, car.color, car.price, car.mileage, car.description],
+        [
+          car.brand,
+          car.model,
+          car.year,
+          car.color,
+          car.price,
+          car.mileage,
+          car.description,
+          car.image
+        ],
         (err) => {
           if (err) {
             console.error('❌ Erreur lors de l\'insertion:', err.message);

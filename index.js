@@ -5,6 +5,7 @@ const cors = require('cors');
 const checkApiKey = require('./middleware/checkApiKey');
 const carsController = require('./controllers/usersControllers');
 const db = require('./database');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,8 @@ app.get('/', (req, res) => {
     }
   });
 });
+
+
 
 app.get('/api/cars/search', checkApiKey, (req, res) => {
   const { brand, year } = req.query;
