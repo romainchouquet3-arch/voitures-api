@@ -148,6 +148,7 @@ car-api/
 ## 👨‍💻 Développeur
 
 CHOUQUET Romain Developpement Web ENSEA 2025-2026
+PIEDELEU Robin Developpement Web ENSEA 2025-2026
 
 ## 📝 Licence
 
