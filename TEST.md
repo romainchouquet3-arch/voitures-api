@@ -1,6 +1,83 @@
-﻿|<p>CHOUQUET Romain</p><p>PIEDELEU Robin</p>|||
-| :- | :-: | -: |
+# 🚗 API Gestion de Voitures Classiques
 
+> **TP Développement Web - Node.js & Express**
+
+Ce projet est une API RESTful permettant la gestion d'un catalogue de voitures. Initialement développée comme un serveur statique, elle a évolué vers une architecture **MVC** connectée à une base de données **SQLite** et sécurisée par une clé API.
+
+**Auteurs :**
+* Romain CHOUQUET
+* Robin PIEDELEU
+
+---
+
+## 🛠️ Stack Technique
+
+* **Runtime :** Node.js
+* **Framework :** Express.js
+* **Base de données :** SQLite3
+* **Middlewares :** Cors, Express.json
+
+---
+
+## ⚙️ Installation et Démarrage
+
+1.  **Cloner le projet** (ou extraire les fichiers) :
+    ```bash
+    git clone <votre-url-repo>
+    cd nom-du-projet
+    ```
+
+2.  **Installer les dépendances :**
+    ```bash
+    npm install
+    ```
+
+3.  **Lancer le serveur :**
+    ```bash
+    node app.js
+    ```
+    *Le serveur démarrera par défaut sur `http://localhost:3000`.*
+
+---
+
+## 🔐 Authentification
+
+L'API est sécurisée. Pour effectuer des requêtes sur les routes `/api/cars`, vous devez inclure le header suivant :
+
+| Header Key | Value |
+| :--- | :--- |
+| `x-api-key` | `ma-super-cle-api-2025` |
+
+> **Note :** Si ce header est absent ou incorrect, l'API retournera une erreur `401 Unauthorized` ou `403 Forbidden`.
+
+---
+
+## 📡 Documentation de l'API
+
+### Routes Publiques
+
+* `GET /` : Message de bienvenue et version de l'API.
+
+### Routes CRUD (Nécessite Authentification)
+
+| Méthode | Endpoint | Description | Paramètres / Body |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/cars` | Récupérer toutes les voitures | - |
+| **GET** | `/api/cars/:id` | Récupérer une voiture spécifique | `id` (URL) |
+| **POST** | `/api/cars` | Ajouter une voiture | JSON (voir modèle ci-dessous) |
+| **PUT** | `/api/cars/:id` | Modifier une voiture existante | `id` (URL) + JSON |
+| **DELETE** | `/api/cars/:id` | Supprimer une voiture | `id` (URL) |
+
+### Exemple de corps de requête (JSON) pour POST/PUT :
+
+```json
+{
+  "model": "Ferrari F40",
+  "year": 1987,
+  "price": 1500000
+}
+
+```
 TP développement web
 
 Séance 1 : Initialisation du projet et première route
@@ -99,4 +176,5 @@ Affiche permet d'effectuer une recherche dans la base de données on voie les di
 ![](Aspose.Words.30d6caec-3913-4b53-84ea-cfbba98d5667.011.png)
 ||||
 | :- | :-: | -: |
+
 
